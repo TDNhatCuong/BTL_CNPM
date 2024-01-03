@@ -1,0 +1,86 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Đăng ký{% endblock %}
+
+{% block content %}
+
+    {% if err_msg %}
+        <div class="alert alert-danger">
+            {{ err_msg }}
+        </div>
+    {% endif %}
+
+{#    <form method="post" action="/register" >#}
+{#        <div class="mb-3">#}
+{#            <label for="name" class="form-label">Họ và tên</label>#}
+{#            <input type="text" class="form-control" id="name" placeholder="Nhập vào tên của bạn">#}
+{#        </div>#}
+{#        <div class="mb-3">#}
+{#            <label for="email" class="form-label">Email</label>#}
+{#            <input type="text" class="form-control" id="email" placeholder="Nhập vào email">#}
+{#        </div>#}
+{#        <div class="mb-3">#}
+{#            <label for="namSinh" class="form-label">Năm sinh</label>#}
+{#            <input type="text" class="form-control" id="namSinh" placeholder="Nhập vào năm sinh">#}
+{#        </div>#}
+{#        <select class="form-select" id="namSinh" name="namSinh">#}
+{#            <option selected disabled>Chọn năm</option>#}
+{#            {% for year in range(1900, 2024) %}#}
+{#                <option value="{{ year }}" selected="1990">{{ year }}</option>#}
+{#            {% endfor %}#}
+{#        </select>#}
+{#        <div class="mb-3">#}
+{#            <label for="diaChi" class="form-label">Địa chỉ</label>#}
+{#            <input type="text" class="form-control" id="diaChi" placeholder="Nhập vào địa chỉ">#}
+{#        </div>#}
+{#        <div class="mb-3">#}
+{#            <label for="sdt" class="form-label">Số điện thoại</label>#}
+{#            <input type="text" class="form-control" id="sdt" placeholder="Nhập vào số điện thoại">#}
+{#        </div>#}
+{#        <div class="mb-3">#}
+{#            <label for="password" class="form-label">Mật khẩu</label>#}
+{#            <input type="password" class="form-control" id="password" placeholder="Nhập vào mật khẩu">#}
+{#        </div>#}
+{#        <div class="mb-3">#}
+{#            <label for="confirm" class="form-label">Xác nhận mật khẩu</label>#}
+{#            <input type="password" class="form-control" id="confirm" placeholder="Nhập lại mật khẩu">#}
+{#        </div>#}
+{#        <button type="submit" class="btn btn-primary">Đăng ký</button>#}
+{#        <div class="mt-3">#}
+{#            <!-- Nút đăng nhập bằng Google -->#}
+{#            <button type="button" class="btn btn-danger">#}
+{#                <i class="bi bi-google"></i> Singin with Google#}
+{#            </button>#}
+{#        </div>#}
+{#    </form>#}
+
+        <form method="post" action="/register" enctype="multipart/form-data">
+            <div class=" mb-3 mt-3">
+                <label for="name">Tên người dùng</label>
+                <input type="text" class="form-control" id="name" placeholder="Tên người dùng" name="name" required>
+            </div>
+            <div class=" mb-3 mt-3">
+                <label for="email">Email</label>
+                <input type="text" class="form-control" id="email" placeholder="Email" name="email" required>
+            </div>
+            <div class=" mt-3 mb-3">
+                <label for="password">Mật khẩu</label>
+                <input type="password" class="form-control" id="password" placeholder="Mật khẩu" name="password" required>
+            </div>
+            <div class=" mt-3 mb-3">
+                <label for="confirm">Xác nhận mật khẩu</label>
+                <input type="password" class="form-control" id="confirm" placeholder="Xác nhân mật khẩu" name="confirm"
+                       required>
+            </div>
+            <div class="form-floating mt-3 mb-3">
+                <button type="submit" class="btn btn-danger">Đăng ký</button>
+            </div>
+        </form>
+            <div class="mt-3">
+            <!-- Nút đăng nhập bằng Google -->
+            <button type="button" class="btn btn-danger">
+                <i class="bi bi-google fab fa-google-plus-g"></i> Đăng ký bằng google</i>
+            </button>
+        </div>
+
+{% endblock %}
