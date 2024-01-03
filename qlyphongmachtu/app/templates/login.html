@@ -1,10 +1,121 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'layout/base.html' %}
 
-</body>
-</html>
+{% block title %}Đăng nhập{% endblock %}
+{% block stylesheets %}
+    <link href="{{ url_for('static', filename = 'css/style.css') }}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+
+    {#    <h1 class=" text-center text-info">Đăng nhập người dùng</h1>#}
+    {##}
+    {#    <form method="post" action="">#}
+    {#        <div class="mb-3">#}
+    {#            <label for="username" class="form-label">Tên người dùng</label>#}
+    {#            <input type="text" class="form-control" id="username" placeholder="Nhập vào tên người dùng">#}
+    {#        </div>#}
+    {#        <div class="mb-3">#}
+    {#            <label for="password" class="form-label">Mật khẩu</label>#}
+    {#            <input type="password" class="form-control" id="password" placeholder="Nhập vào mật khẩu">#}
+    {#        </div>#}
+    {#        <button type="submit" class="btn btn-primary">Đăng nhập</button>#}
+    {#        <button type="button" class="btn btn-secondary" onclick="window.location.href='/register'">Đăng ký</button>#}
+    {#        <div class="mt-3">#}
+    {#            <p>Hoặc đăng nhập với:</p>#}
+    {#            <!-- Nút đăng nhập bằng Google -->#}
+    {#            <button type="button" class="btn btn-danger">#}
+    {#                <i class="bi bi-google"></i> Login with Google#}
+    {#            </button>#}
+    {#        </div>#}
+    {#    </form>#}
+
+
+
+        <h1 class=" text-center text-info">Đăng nhập người dùng</h1>
+        <form method="post" action="">
+            <div class="mb-3 mt-3">
+                <label for="email">Email</label>
+                <input type="text" class="form-control" id="email" placeholder="Tên đăng nhập" name="email" required>
+            </div>
+            <div class="mt-3 mb-3">
+                <label for="password">Mật khẩu</label>
+                <input type="password" class="form-control" id="password" placeholder="Mật khẩu" name="password" required>
+            </div>
+            <div class=" mt-3 mb-3">
+                <button type="submit" class="btn btn-danger">Đăng nhập</button>
+            </div>
+            <div class=" mt-3 mb-3">
+                <button type="button" class="btn btn-danger"><a href="/register">Đăng ký</a></button>
+            </div>
+        </form>
+
+
+
+{#    <div class="container mt-5" id="container">#}
+{#        <div class="form-container sign-up-container">#}
+{#            <form method="post" action="/register" enctype="multipart/form-data">#}
+{#                <div class=" mb-3 mt-3">#}
+{#                    <label for="name">Tên người dùng</label>#}
+{#                    <input type="text" class="form-control" id="name" placeholder="Tên người dùng" name="name" required>#}
+{#                </div>#}
+{#                <div class=" mb-3 mt-3">#}
+{#                    <label for="email">Email</label>#}
+{#                    <input type="text" class="form-control" id="email" placeholder="Email" name="email" required>#}
+{#                </div>#}
+{#                <div class=" mt-3 mb-3">#}
+{#                    <label for="password">Mật khẩu</label>#}
+{#                    <input type="password" class="form-control" id="password" placeholder="Mật khẩu" name="password"#}
+{#                           required>#}
+{#                </div>#}
+{#                <div class=" mt-3 mb-3">#}
+{#                    <label for="confirm">Xác nhận mật khẩu</label>#}
+{#                    <input type="password" class="form-control" id="confirm" placeholder="Xác nhân mật khẩu"#}
+{#                           name="confirm"#}
+{#                           required>#}
+{#                </div>#}
+{#                <div class="form-floating mt-3 mb-3">#}
+{#                    <button type="submit" class="btn btn-danger">Đăng ký</button>#}
+{#                </div>#}
+{#            </form>#}
+{#        </div>#}
+{#        <div class="form-container sign-in-container">#}
+{#            <form method="post" id="loginForm">#}
+{#                <h1>Sign in</h1>#}
+{#                <div class="social-container">#}
+{#                    <a href="#" class="social f"><i class="fab fa-facebook-f"></i></a>#}
+{#                    <a href="/user-login/google" class="social g"><i class="fab fa-google-plus-g"></i></a>#}
+{#                    <a href="#" class="social in"><i class="fab fa-linkedin-in"></i></a>#}
+{#                </div>#}
+{#                <span>or use your account</span>#}
+{#                <form method="post" action="">#}
+{#                    <div class="mb-3 mt-3">#}
+{#                        <label for="email">Email</label>#}
+{#                        <input type="text" class="form-control" id="email" placeholder="Email" name="email" required>#}
+{#                    </div>#}
+{#                    <div class="mt-3 mb-3">#}
+{#                        <label for="password">Mật khẩu</label>#}
+{#                        <input type="password" class="form-control" id="password" placeholder="Mật khẩu" name="password"#}
+{#                               required>#}
+{#                    </div>#}
+{#                    <div class=" mt-3 mb-3">#}
+{#                        <button type="submit" class="btn btn-danger">Đăng nhập</button>#}
+{#                    </div>#}
+{#                    <a href="#">Forgot your password?</a>#}
+{#                </form>#}
+{#        </div>#}
+{#        <div class="overlay-container">#}
+{#            <div class="overlay">#}
+{#                <div class="overlay-panel overlay-left">#}
+{#                    <h1>Welcome Back!</h1>#}
+{#                    <p>To keep connected with us please login with your personal info</p>#}
+{#                    <button class="ghost" id="signIn">Sign In</button>#}
+{#                </div>#}
+{#                <div class="overlay-panel overlay-right">#}
+{#                    <h1>Hello, Friend!</h1>#}
+{#                    <p>Enter your personal details and start journey with us</p>#}
+{#                    <button class="ghost" id="signUp">Sign Up</button>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+
+{% endblock %}
