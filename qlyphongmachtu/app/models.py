@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, Boolean, DateTime, Float, ForeignKey
+from sqlalchemy import Column, String, Integer, Boolean, DateTime, Float, ForeignKey, Date
 from sqlalchemy.orm import relationship
 from app import db
 from datetime import datetime
@@ -41,8 +41,9 @@ class Admin(Account):
 
 class Patient(Account):
     id = Column(Integer, ForeignKey(Account.id), primary_key=True)
-    diaChi = Column(String(50))
-    namSinh = Column(String(50))
+    diaChi = Column(String(50), nullable=False)
+    namSinh = Column(String(50), nullable=False)
+    gioiTinh = Column(String(50), nullable=False)
     sdt = Column(String(50), nullable=False)
     joined_date = Column(DateTime, default=datetime.now())
     #active = Column(Boolean, default=False)
@@ -52,6 +53,10 @@ class Patient(Account):
     __mapper_args__ = {
         'polymorphic_identity': 'patient'
     }
+
+    def __str__(self):
+        return self.name
+
 
 class Nurse(Account):
     id = Column(Integer, ForeignKey(Account.id), primary_key=True)
@@ -74,14 +79,18 @@ class Time(db.Model):
     period = Column(String(20), nullable=False)
     books_times = relationship('Books', backref='time', lazy=True)
 
+
     def __str__(self):
         return self.period
 
 class Books(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
-    booked_date = Column(DateTime, default=datetime.now())
+    booked_date = Column(Date, default=datetime.now().date())
     patient_id = Column(Integer, ForeignKey(Patient.id,  onupdate="CASCADE", ondelete="CASCADE"), nullable=False)
     time_id = Column(Integer, ForeignKey(Time.id), nullable=False)
+
+    def __repr__(self):
+        return f"<YourModel(booked_date='{self.booked_date.strftime('%Y-%m-%d')}')>"
 
     def __str__(self):
         return self.id
@@ -122,6 +131,8 @@ class Prescription(db.Model):               #Đơn thuốc
 
 
 
+
+
 if __name__ == "__main__":
     from app import app
     with app.app_context():
@@ -133,9 +144,16 @@ if __name__ == "__main__":
         # d = Doctor(name='Truong Dinh Cuong', email='nhatcuong@gmail.com',
         #             password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()), type="doctor", ngayVaoLam="14/11/2022")
         #
+        # p = Patient(name='Trinh Tong Hiep', email='tonghiep@gmail.com',
+        #             password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()), type="patient",
+        #             diaChi='178NVC, GV, HCM', namSinh="2003", gioiTinh='Nam', sdt="0123456789")
+        #
+        #
         # db.session.add(a)
         # db.session.add(d)
+        # db.session.add(p)
         # db.session.commit()
+        #
         #
         # t1 = Time(period='07:00 - 08:00')
         # t2 = Time(period='08:00 - 09:00')
@@ -163,7 +181,7 @@ if __name__ == "__main__":
         # db.session.add(t11)
         #
         # db.session.commit()
-
+        #
         # m1 = Medicine(name='Panadol', unit='Vỉ', price=25000, usage='Thuốc giảm đau, hạ sốt')
         # m2 = Medicine(name='Becberin', unit='Lọ', price=20000, usage='Thuốc tiêu hóa')
         # m3 = Medicine(name='Paracetamol', unit='Vỉ', price=30000, usage='Thốc hạ sốt, cảm cúm')
