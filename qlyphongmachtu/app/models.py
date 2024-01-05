@@ -31,6 +31,9 @@ class Doctor(Account):
         'polymorphic_identity': 'doctor'
     }
 
+    def __str__(self):
+        return self.name
+
 class Admin(Account):
     id = Column(Integer, ForeignKey(Account.id), primary_key=True)
     ngayTao = Column(String(50), nullable=False)
@@ -39,12 +42,16 @@ class Admin(Account):
         'polymorphic_identity': 'admin'
     }
 
+    def __str__(self):
+        return self.name
+
+
 class Patient(Account):
     id = Column(Integer, ForeignKey(Account.id), primary_key=True)
-    diaChi = Column(String(50), nullable=False)
-    namSinh = Column(String(50), nullable=False)
-    gioiTinh = Column(String(50), nullable=False)
-    sdt = Column(String(50), nullable=False)
+    diaChi = Column(String(50))
+    namSinh = Column(String(50))
+    gioiTinh = Column(String(50))
+    sdt = Column(String(50))
     joined_date = Column(DateTime, default=datetime.now())
     #active = Column(Boolean, default=False)
     books = relationship('Books', cascade="all,delete", backref='patient', lazy=True)
@@ -109,21 +116,25 @@ class Medicine(db.Model):
 
 class MedicalForm(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
-    date = Column(DateTime, default=datetime.now())
+    date = Column(Date, default=datetime.now().date())
     description = Column(String(100))
     disease = Column(String(50), nullable=False)
     doctor_id = Column(Integer, ForeignKey(Doctor.id), nullable=False)
     patient_id = Column(Integer, ForeignKey(Patient.id), nullable=False)
     prescription = relationship('Prescription', backref='medicalForm', lazy=True)
 
+    def __repr__(self):
+        return f"<YourModel(booked_date='{self.booked_date.strftime('%Y-%m-%d')}')>"
+
     def __str__(self):
-        return self.id
+        return Patient.query.get(self.patient_id).name
 
 
 class Prescription(db.Model):               #Đơn thuốc
     id = Column(Integer, primary_key=True, autoincrement=True)
     medicine_id = Column(Integer, ForeignKey(Medicine.id), nullable=False)
     quantity = Column(Integer, default=0)
+    guide = Column(String(100))
     medicalForm_id = Column(Integer, ForeignKey(MedicalForm.id), nullable=False)
 
     def __str__(self):
@@ -191,4 +202,8 @@ if __name__ == "__main__":
         # db.session.add(m3)
         #
         # db.session.commit()
+
+
+
+
 
