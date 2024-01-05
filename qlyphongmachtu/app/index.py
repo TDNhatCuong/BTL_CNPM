@@ -31,7 +31,7 @@ def login_user_process():
                 return redirect("/")
             elif current_user.type == 'doctor':
                 return redirect('/doctor')
-            elif current_user.type == 'admin':
+            elif current_user.type == 'administrator':
                 return redirect('/admin')
             elif current_user.type == 'nurse':
                 return redirect('/nurse')
@@ -78,6 +78,7 @@ def register_user():
 @app.route('/info', methods=['get','post'])
 def update():
     err_msg = ""
+
     if request.method.__eq__('POST'):
         try:
             dao.update_info(namSinh=request.form.get('namSinh'),
