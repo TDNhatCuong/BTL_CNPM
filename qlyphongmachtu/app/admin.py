@@ -1,7 +1,7 @@
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin, BaseView, expose, AdminIndexView
 from app import app, db
-from app.models import Time, Medicine, Books, Patient, MedicalForm, Doctor, Prescription
+from app.models import Time, Medicine, Books, Cashier, Patient, MedicalForm, Doctor, Prescription, Receipt, ReceiptDetails, Rules, Administrator
 # from wtforms.fields import DateField
 # from wtforms.widgets import Input
 
@@ -54,14 +54,28 @@ class MedicalFormView(ModelView):
 
 
 class PrescriptionView(ModelView):
-    column_list = ['medicalForm', 'medicalForm.date', 'medicine', 'quantity', 'guide']
+    column_list = ['id', 'medicalForm', 'medicalForm.date', 'medicine', 'quantity', 'guide']
 
 
     #column_filters = ['medicalForm.date']
     # can_export = True
 
 
+class ReceiptView(ModelView):
+    column_list = ['patient', 'created_date', 'cashier']
 
+class ReceiptDetailsView(ModelView):
+    column_list = ['receipt', 'medicalForm', 'examines_price', 'medicine_price', 'total_price']
+
+
+class CashierView(ModelView):
+    column_list = ['name']
+
+class RulesView(ModelView):
+    column_list = ['administrator', 'change_date ', 'quantity_patient', 'examines_price']
+
+class AdminView(ModelView):
+    column_list = ['name', 'joined_date']
 
 class MyStatsView(BaseView):
     @expose("/")
@@ -80,5 +94,12 @@ admin.add_view(DoctorView(Doctor, db.session))
 
 admin.add_view(MedicalFormView(MedicalForm, db.session))
 admin.add_view(PrescriptionView(Prescription, db.session))
+
+admin.add_view(ReceiptView(Receipt, db.session))
+admin.add_view(ReceiptDetailsView(ReceiptDetails, db.session))
+admin.add_view(CashierView(Cashier, db.session))
+
+admin.add_view(RulesView(Rules, db.session))
+admin.add_view(AdminView(Administrator, db.session))
 
 admin.add_view(MyStatsView(name='Thống kê báo cáo'))
