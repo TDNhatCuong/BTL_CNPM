@@ -142,8 +142,6 @@ class Prescription(db.Model):               #Đơn thuốc
 
 
 
-
-
 if __name__ == "__main__":
     from app import app
     with app.app_context():
