@@ -9,6 +9,7 @@ from flask_login import current_user
 
 def add_booking(desc, date, time):
     b = Books(desc=desc, booked_date=date, time_id=time,patient=current_user)
+    print('acb')
     db.session.add(b)
     db.session.commit()
     return b

@@ -18,39 +18,35 @@ from flask_login import login_user, logout_user, login_required, current_user
 def index():
     return render_template('index.html')
 
-
-
-
 @app.route('/booking-form')
 def booking():
     time = dao.load_time()
     return render_template('booking-form.html', time=time)
 
-# @app.route('/api/booking-form', methods=['post'])
-# @login_required
-# def add_booking():
+@app.route('/api/booking-form', methods=['post'])
+@login_required
+def add_booking():
+    data = request.json
+    desc = data.get('desc')
+    date = data.get('date')
+    time = data.get('time_id')
+    print(time)
+    try:
+        b = dao.add_booking(desc=desc, date=date,time=time)
+        print(time)
+        print('KHONG LOI')
+    except  Exception as e:
+        print(str(e))
+        return {'status': 404, 'err_msg': 'Chương trình đang bị lỗi'}
 
-    # err_msg = ""
-    # data = request.json
-    # desc = data.get('desc')
-    # date = data.get('date')
-    # time = data.get('time_id')
-    # try:
-    #     b = dao.add_booking(desc=desc, date=date,time=time)
-    #     print(time)
-    #     print('KHONG LOI')
-    # except  Exception as e:
-    #     print(str(e))
-    #     return {'status': 404, 'err_msg': 'Chương trình đang bị lỗi'}
-    #
-    #
-    # return {'status': 201, 'booking': {
-    #     'id' : b.id,
-    #     'desc' : b.desc,
-    #     'date' : b.booked_date,
-    #     'time_id' : b.time_id
-    #     }
-    # }
+
+    return {'status': 201, 'booking': {
+        'id' : b.id,
+        'desc' : b.desc,
+        'date' : b.booked_date,
+        'time_id' : b.time_id
+        }
+    }
 
 @app.route("/login", methods=['get', 'post'])
 def login_user_process():
@@ -107,22 +103,22 @@ def register_user():
     return render_template('register.html', err_msg=err_msg)
 
 
-
-@app.route('/booking-form', methods=['post', 'get'])
-def add_booking():
-    err_msg = ""
-    if request.method.__eq__('POST'):
-        try:
-
-            dao.add_booking(desc=request.form.get('descId'),
-                            date=request.form.get('dateId'),
-                            time=request.form.get('timeId'))
-        except:
-            err_msg = 'Hệ thống đang bận, vui lòng thử lại sau!'
-        else:
-            err_msg = "Cập nhật thành công"
-        return redirect('/booking-form')
-    return render_template('index.html', err_msg=err_msg)
+#
+# @app.route('/booking-form', methods=['post', 'get'])
+# def add_booking():
+#     err_msg = ""
+#     if request.method.__eq__('POST'):
+#         try:
+#
+#             dao.add_booking(desc=request.form.get('descId'),
+#                             date=request.form.get('dateId'),
+#                             time=request.form.get('timeId'))
+#         except:
+#             err_msg = 'Hệ thống đang bận, vui lòng thử lại sau!'
+#         else:
+#             err_msg = "Cập nhật thành công"
+#         return redirect('/booking-form')
+#     return render_template('index.html', err_msg=err_msg)
 
 @app.route('/info', methods=['get','post'])
 def update():

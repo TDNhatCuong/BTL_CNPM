@@ -14,31 +14,30 @@
                         <div class="form-header">
                             <h1>Đặt lịch khám</h1>
                         </div>
-                        <form method="post" action="/booking-form" id="bookForm" name="bookForm">
+                        <form id="bookForm" name="bookForm">
                             <div class="row">
                                 <div class="form-group">
-                                    <label class="form-label">Chọn thời gian:</label>
+                                    <label for="timeId" class="form-label">Chọn thời gian:</label>
 <!--                                    for="timeSelect"-->
-                                    <select>
+                                    <select id="timeId">
                                         {% for t in time %}
-                                        <option value="time" name="timeId" id="timeId"> {{ t.period }}</option>
+                                        <option value="{{ t.id }}" name="time"> {{ t.period }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <span class="form-label">Pickup Date</span>
-                                        <input class="form-control" name="dateId" type="date" id="dateId" required>
+                                        <input class="form-control" name="date" type="date" id="dateId" required>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <span class="form-label">Mô tả</span>
-                                    <textarea class="form-control" name="descId" id="descId"
+                                    <textarea class="form-control" name="desc" id="descId"
                                               placeholder="Mô tả tình trạng bệnh"></textarea>
                                 </div>
                                 <div class="form-btn">
-                                    <button class="submit-btn" id="bookGo" onclick="addBook( {{ time.id }})">Đặt lịch
-                                        khám
+                                    <button class="submit-btn" id="bookGo" onclick="addBook()">Đặt lịch khám
                                     </button>
                                 </div>
                             </div>

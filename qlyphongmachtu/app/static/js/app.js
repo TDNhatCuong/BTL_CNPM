@@ -1,8 +1,8 @@
 function addBook(){
     let desc = document.getElementById('descId');
     let date = document.getElementById('dateId');
-    timeId = document.getElementById('timeId');
-    let selectedTime = timeId.options[timeSelect.selectedIndex];
+    let selectElement = document.getElementById('timeId');
+    let timeId = selectElement.value;
     if (desc !== null) {
         fetch('/api/booking-form',{
         method:'post',

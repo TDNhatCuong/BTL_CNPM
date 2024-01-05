@@ -1,49 +1,75 @@
 from flask_admin.contrib.sqla import ModelView
-from flask_admin import Admin, BaseView, expose, AdminIndexView
+from flask_admin import Admin, BaseView, expose
 from app import app, db
 from app.models import Time, Medicine, Books, Cashier, Patient, MedicalForm, Doctor, Prescription, Receipt, ReceiptDetails, Rules, Administrator
-# from wtforms.fields import DateField
-# from wtforms.widgets import Input
+from flask_login import logout_user, current_user
+from flask import redirect
 
 
 admin = Admin(app=app, name="QUẢN TRỊ PHÒNG MẠCH TƯ", template_mode="bootstrap4")
 
 
-class TimeView(ModelView):
+class AuthenticatedUser(BaseView):
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+class AuthenticatedDoctor(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.type == 'doctor'
+
+class AuthenticatedAdmin(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.type == 'administrator'
+
+class AuthenticatedAdmin2(BaseView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.type == 'administrator'
+
+class AuthenticatedPatient(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.type == 'Patient'
+
+class AuthenticatedNurse(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.type == 'Nurse'
+
+class AuthenticatedCashier(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.type == 'Cashier'
+
+
+
+
+class TimeView(AuthenticatedAdmin):
     can_export = True
 
-class MedicineView(ModelView):
+class MedicineView(AuthenticatedAdmin, AuthenticatedDoctor):
     column_searchable_list = ['name']
     column_filters = ['price', 'name']
     can_export = True
     can_view_details = True
 
 
-# class DateWithoutTimeField(DateField):
-#     widget = Input()
-
-class BooksView(ModelView):                     #DS khám bệnh
+class BooksView(AuthenticatedNurse):                     #DS khám bệnh
     can_export = True
     column_list = ['id', 'patient', 'booked_date', 'time']
     #column_filters = ['patient_name']
 
-    # form_overrides = {
-    #     'booked_date': DateWithoutTimeField
-    # }
 
-class PatientView(ModelView):
+
+class PatientView(AuthenticatedNurse):
     can_export = True
     column_list = ['name', 'gioiTinh', 'namSinh', 'diaChi']
     column_filters = ['gioiTinh', 'namSinh']
     column_searchable_list = ['name']
 
-class DoctorView(ModelView):
+class DoctorView(AuthenticatedAdmin):
     column_list = ['name', 'ngayVaoLam']
     column_searchable_list = ['name']
     can_export = True
 
 
-class MedicalFormView(ModelView):
+class MedicalFormView(AuthenticatedDoctor):
     column_list = ['patient', 'description', 'disease', 'date', 'doctor']
 
 
@@ -53,37 +79,36 @@ class MedicalFormView(ModelView):
 
 
 
-class PrescriptionView(ModelView):
+class PrescriptionView(AuthenticatedDoctor):
     column_list = ['id', 'medicalForm', 'medicalForm.date', 'medicine', 'quantity', 'guide']
 
 
-    #column_filters = ['medicalForm.date']
-    # can_export = True
-
-
-class ReceiptView(ModelView):
+class ReceiptView(AuthenticatedCashier):
     column_list = ['patient', 'created_date', 'cashier']
 
-class ReceiptDetailsView(ModelView):
+class ReceiptDetailsView(AuthenticatedCashier):
     column_list = ['receipt', 'medicalForm', 'examines_price', 'medicine_price', 'total_price']
 
 
-class CashierView(ModelView):
+class CashierView(AuthenticatedAdmin):
     column_list = ['name']
 
-class RulesView(ModelView):
+class RulesView(AuthenticatedAdmin):
     column_list = ['administrator', 'change_date ', 'quantity_patient', 'examines_price']
 
-class AdminView(ModelView):
+class AdminView(AuthenticatedAdmin):
     column_list = ['name', 'joined_date']
 
-class MyStatsView(BaseView):
+class MyStatsView(AuthenticatedAdmin2):
     @expose("/")
     def index(self):
         return self.render('admin/stats.html')
 
-
-
+class MyLogoutView(BaseView):
+    @expose('/')
+    def index(self):
+        logout_user()
+        return redirect('/admin')
 
 admin.add_view(TimeView(Time, db.session))
 admin.add_view(MedicineView(Medicine, db.session))
@@ -103,3 +128,4 @@ admin.add_view(RulesView(Rules, db.session))
 admin.add_view(AdminView(Administrator, db.session))
 
 admin.add_view(MyStatsView(name='Thống kê báo cáo'))
+admin.add_view(MyLogoutView(name='Đăng xuất'))
