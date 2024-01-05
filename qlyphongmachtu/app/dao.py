@@ -1,9 +1,21 @@
 
 import hashlib
 from app import app,db
-from app.models import Patient, Account
+from app.models import Patient, Account, Books, Time
 import cloudinary.uploader
+from flask_login import current_user
 
+
+
+def add_booking(desc, date, time):
+    b = Books(desc=desc, booked_date=date, time_id=time,patient=current_user)
+    db.session.add(b)
+    db.session.commit()
+    return b
+
+
+def load_time():
+    return Time.query.all()
 
 def get_user_by_id(user_id):
     return Account.query.get(user_id)
@@ -21,6 +33,14 @@ def add_user(name, email, password, err_msg):
     db.session.add(u)
     db.session.commit()
     err_msg="Bạn đã đăng ký thành công"
+
+#
+# def add_booking(desc, date, time):
+#     t = Time.query.filter_by(period = time).first()
+#     if t:
+#         b = Books(desc=desc, booked_date=date, time_id=t.id, patient=current_user)
+#         db.session.add(b)
+#         db.session.commit()
 
 
 def update_info(namSinh,sdt,diaChi,avatar,Patient_id, gioiTinh):

@@ -97,8 +97,9 @@ class Books(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     booked_date = Column(Date, default=datetime.now().date())
     patient_id = Column(Integer, ForeignKey(Patient.id,  onupdate="CASCADE", ondelete="CASCADE"), nullable=False)
-    time_id = Column(Integer, ForeignKey(Time.id), nullable=False)
-
+    #time_id = Column(Integer, ForeignKey(Time.id), nullable=False)
+    time_id = Column(Integer, ForeignKey(Time.id))
+    desc = Column(String(500))
 
 
     def __repr__(self):
