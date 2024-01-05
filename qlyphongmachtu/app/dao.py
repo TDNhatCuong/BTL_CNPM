@@ -15,8 +15,26 @@ def auth_user(email, password):
                                 Account.password.__eq__(password)).first()
 
 
-def add_user(name, email, password):
+def add_user(name, email, password, err_msg):
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
-    u = Patient(name=name, email=email, password=password, type="patient")
+    u = Patient(name=name, email=email, password=password)
     db.session.add(u)
     db.session.commit()
+    err_msg="Bạn đã đăng ký thành công"
+
+
+def update_info(namSinh,sdt,diaChi,avatar,Patient_id, gioiTinh):
+    p = Patient.query.filter_by(id=Patient_id).first()
+    a = Account.query.filter_by(id=Patient_id).first()
+    if p:
+        p.namSinh = namSinh
+        p.sdt = sdt
+        p.diaChi = diaChi
+        p.gioiTinh = gioiTinh
+        if avatar:
+            res = cloudinary.uploader.upload(avatar)
+            print(res)
+            a.avatar = res['secure_url']
+
+        db.session.commit()
+
