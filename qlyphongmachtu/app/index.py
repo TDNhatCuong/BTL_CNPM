@@ -79,12 +79,12 @@ def register_user():
 def update():
     err_msg = ""
     if request.method.__eq__('POST'):
-
         try:
             dao.update_info(namSinh=request.form.get('namSinh'),
                             sdt=request.form.get('sdt'),
                             diaChi=request.form.get('diaChi'),
                             avatar=request.files.get('avatar'),
+                            gioiTinh=request.form.get('gioiTinh'),
                             Patient_id=current_user.id)
         except:
             err_msg = 'Hệ thống đang bận, vui lòng thử lại sau!'

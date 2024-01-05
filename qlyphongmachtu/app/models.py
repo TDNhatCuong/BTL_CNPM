@@ -49,7 +49,7 @@ class Admin(Account):
 class Patient(Account):
     id = Column(Integer, ForeignKey(Account.id), primary_key=True)
     diaChi = Column(String(50))
-    namSinh = Column(String(50))
+    namSinh = Column(Date)
     gioiTinh = Column(String(50))
     sdt = Column(String(50))
     joined_date = Column(DateTime, default=datetime.now())
@@ -147,21 +147,21 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
-        # a = Admin(name='Pham Ngoc Son', email='truongson@gmail.com',
-        #             password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()), type="admin", ngayTao="07/10/2022")
-        #
-        # d = Doctor(name='Truong Dinh Cuong', email='nhatcuong@gmail.com',
-        #             password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()), type="doctor", ngayVaoLam="14/11/2022")
-        #
-        # p = Patient(name='Trinh Tong Hiep', email='tonghiep@gmail.com',
-        #             password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()), type="patient",
-        #             diaChi='178NVC, GV, HCM', namSinh="2003", gioiTinh='Nam', sdt="0123456789")
-        #
-        #
-        # db.session.add(a)
-        # db.session.add(d)
-        # db.session.add(p)
-        # db.session.commit()
+        a = Admin(name='Pham Ngoc Son', email='truongson@gmail.com',
+                    password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()), type="admin", ngayTao="07/10/2022")
+
+        d = Doctor(name='Truong Dinh Cuong', email='nhatcuong@gmail.com',
+                    password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()), type="doctor", ngayVaoLam="14/11/2022")
+
+        p = Patient(name='Trinh Tong Hiep', email='tonghiep@gmail.com',
+                    password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()), type="patient",
+                    sdt="0123456789")
+
+
+        db.session.add(a)
+        db.session.add(d)
+        db.session.add(p)
+        db.session.commit()
         #
         #
         # t1 = Time(period='07:00 - 08:00')

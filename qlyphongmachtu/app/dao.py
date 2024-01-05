@@ -23,13 +23,14 @@ def add_user(name, email, password, err_msg):
     err_msg="Bạn đã đăng ký thành công"
 
 
-def update_info(namSinh,sdt,diaChi,avatar,Patient_id):
+def update_info(namSinh,sdt,diaChi,avatar,Patient_id, gioiTinh):
     p = Patient.query.filter_by(id=Patient_id).first()
     a = Account.query.filter_by(id=Patient_id).first()
     if p:
         p.namSinh = namSinh
         p.sdt = sdt
         p.diaChi = diaChi
+        p.gioiTinh = gioiTinh
         if avatar:
             res = cloudinary.uploader.upload(avatar)
             print(res)
