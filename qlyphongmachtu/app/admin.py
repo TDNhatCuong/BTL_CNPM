@@ -25,7 +25,7 @@ class MedicineView(ModelView):
 class BooksView(ModelView):                     #DS khám bệnh
     can_export = True
     column_list = ['id', 'patient', 'booked_date', 'time']
-    column_filters = ['booked_date']
+    #column_filters = ['patient_name']
 
     # form_overrides = {
     #     'booked_date': DateWithoutTimeField
@@ -34,25 +34,30 @@ class BooksView(ModelView):                     #DS khám bệnh
 class PatientView(ModelView):
     can_export = True
     column_list = ['name', 'gioiTinh', 'namSinh', 'diaChi']
-    column_filters = ['name', 'gioiTinh', 'namSinh']
+    column_filters = ['gioiTinh', 'namSinh']
+    column_searchable_list = ['name']
 
 class DoctorView(ModelView):
     column_list = ['name', 'ngayVaoLam']
-    column_filters = ['name']
+    column_searchable_list = ['name']
     can_export = True
 
 
 class MedicalFormView(ModelView):
     column_list = ['patient', 'description', 'disease', 'date', 'doctor']
-    #column_filters = ['patient']
 
-    # form_overrides = {
-    #     'date': DateWithoutTimeField
-    # }
+
+    # def _format_filter_value(self, value):
+    #     patient = Patient.query.get(value)
+    #     return patient.name if patient else None
+
+
 
 class PrescriptionView(ModelView):
     column_list = ['medicalForm', 'medicalForm.date', 'medicine', 'quantity', 'guide']
-    #column_filters = ['medicalForm', 'medicalForm.date']
+
+
+    #column_filters = ['medicalForm.date']
     # can_export = True
 
 

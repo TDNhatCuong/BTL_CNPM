@@ -96,6 +96,8 @@ class Books(db.Model):
     patient_id = Column(Integer, ForeignKey(Patient.id,  onupdate="CASCADE", ondelete="CASCADE"), nullable=False)
     time_id = Column(Integer, ForeignKey(Time.id), nullable=False)
 
+
+
     def __repr__(self):
         return f"<YourModel(booked_date='{self.booked_date.strftime('%Y-%m-%d')}')>"
 
@@ -144,6 +146,7 @@ class Prescription(db.Model):               #Đơn thuốc
 
 
 
+
 if __name__ == "__main__":
     from app import app
     with app.app_context():
@@ -159,10 +162,14 @@ if __name__ == "__main__":
         #             password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()), type="patient",
         #             diaChi='178NVC, GV, HCM', namSinh="2003", gioiTinh='Nam', sdt="0123456789")
         #
+        # p2 = Patient(name='Nguyen Huy Tan', email='huytan@gmail.com',
+        #             password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()), type="patient",
+        #             diaChi='124 LeVanLuong, Nha Be, HCM', namSinh="2003", gioiTinh='Nam', sdt="0987654321")
         #
         # db.session.add(a)
         # db.session.add(d)
         # db.session.add(p)
+        # db.session.add(p2)
         # db.session.commit()
         #
         #
@@ -195,11 +202,13 @@ if __name__ == "__main__":
         #
         # m1 = Medicine(name='Panadol', unit='Vỉ', price=25000, usage='Thuốc giảm đau, hạ sốt')
         # m2 = Medicine(name='Becberin', unit='Lọ', price=20000, usage='Thuốc tiêu hóa')
-        # m3 = Medicine(name='Paracetamol', unit='Vỉ', price=30000, usage='Thốc hạ sốt, cảm cúm')
+        # m3 = Medicine(name='Paracetamol', unit='Vỉ', price=30000, usage='Thuốc hạ sốt, cảm cúm')
+        # m4 = Medicine(name='Thuốc ho Prospan', unit='Chai', price=30000, usage='Thuốc giảm ho, trị ho dai ho có đờm')
         #
         # db.session.add(m1)
         # db.session.add(m2)
         # db.session.add(m3)
+        # db.session.add(m4)
         #
         # db.session.commit()
 
