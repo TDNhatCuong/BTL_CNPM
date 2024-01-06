@@ -12,10 +12,10 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link" href="/">Trang chủ</a></li>
-                    <li class="nav-item"><a class="nav-link" href="about.html">Giới thiệu</a></li>
-                    <li class="nav-item"><a class="nav-link" href="contact.html">Dịch vụ</a></li>
-                    <li class="nav-item"><a class="nav-link" href="pricing.html">Tin tức</a></li>
-                    <li class="nav-item"><a class="nav-link" href="faq.html">Liên hệ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about">Giới thiệu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/">Dịch vụ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/blog-home">Tin tức</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/contact">Liên hệ</a></li>
 
                     {% if current_user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="/info"> <img width="25px" class="img-rounder" src="{{ current_user.avatar }}"></a></li>

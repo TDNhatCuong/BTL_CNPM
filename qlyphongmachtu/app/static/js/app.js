@@ -19,9 +19,9 @@ function addBook(){
 
         }).then(function(data){
             if (data.status == 201){
-                alert('Thành công')
+                alert('Đặt lịch hành công')
             } else if (data.status == 404 ){
-                alert('Không thành  công')
+                alert('Đặt lịch thất bại')
             }
         })
     }

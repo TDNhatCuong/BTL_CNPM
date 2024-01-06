@@ -18,6 +18,22 @@ from flask_login import login_user, logout_user, login_required, current_user
 def index():
     return render_template('index.html')
 
+
+@app.route('/admin/login', methods=['post'])
+def login_admin_process():
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    user = dao.auth_user(email=email, password=password)
+    if user:
+        login_user(user=user)
+        if current_user.type == 'patient':
+            return redirect("/")
+        else:
+            return redirect('/admin')
+
+    return redirect('/admin')
+
 @app.route('/booking-form')
 def booking():
     time = dao.load_time()
@@ -48,6 +64,7 @@ def add_booking():
         }
     }
 
+
 @app.route("/login", methods=['get', 'post'])
 def login_user_process():
     if request.method.__eq__('POST'):
@@ -58,14 +75,8 @@ def login_user_process():
             login_user(user=user)
             if current_user.type == 'patient':
                 return redirect("/")
-            elif current_user.type == 'doctor':
-                return redirect('/doctor')
-            elif current_user.type == 'administrator':
+            else:
                 return redirect('/admin')
-            elif current_user.type == 'nurse':
-                return redirect('/nurse')
-            else: # cashier
-                return redirect('/cashier')
 
     return render_template("login.html")
 

@@ -27,15 +27,15 @@ class AuthenticatedAdmin2(BaseView):
 
 class AuthenticatedPatient(ModelView):
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.type == 'Patient'
+        return current_user.is_authenticated and current_user.type == 'patient'
 
 class AuthenticatedNurse(ModelView):
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.type == 'Nurse'
+        return current_user.is_authenticated and current_user.type == 'nurse'
 
 class AuthenticatedCashier(ModelView):
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.type == 'Cashier'
+        return current_user.is_authenticated and current_user.type == 'cashier'
 
 
 
@@ -110,6 +110,7 @@ class MyLogoutView(BaseView):
         logout_user()
         return redirect('/admin')
 
+
 admin.add_view(TimeView(Time, db.session))
 admin.add_view(MedicineView(Medicine, db.session))
 
@@ -126,6 +127,7 @@ admin.add_view(CashierView(Cashier, db.session))
 
 admin.add_view(RulesView(Rules, db.session))
 admin.add_view(AdminView(Administrator, db.session))
+
 
 admin.add_view(MyStatsView(name='Thống kê báo cáo'))
 admin.add_view(MyLogoutView(name='Đăng xuất'))
