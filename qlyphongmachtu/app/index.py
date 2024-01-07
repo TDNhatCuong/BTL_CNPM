@@ -1,23 +1,15 @@
-from flask import Flask, render_template, request, redirect, url_for, session
-import os
-import pathlib
-import requests
+from datetime import date
+from flask import Flask, render_template, request, redirect, jsonify
+from flask import request
 from app import dao, login
 from app import app, db
 from flask_login import login_user, logout_user, login_required, current_user
-
-# import requests
-# from flask import Flask, session, abort, redirect, request
-# from google.oauth2 import id_token
-# from google_auth_oauthlib.flow import Flow
-# from pip._vendor import cachecontrol
-# import google.auth.transport.requests
+from app.models import Books
 
 
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/admin/login', methods=['post'])
 def login_admin_process():
@@ -33,6 +25,7 @@ def login_admin_process():
             return redirect('/admin')
 
     return redirect('/admin')
+
 
 @app.route('/booking-form')
 def booking():
@@ -54,7 +47,6 @@ def add_booking():
     except  Exception as e:
         print(str(e))
         return {'status': 404, 'err_msg': 'Chương trình đang bị lỗi'}
-
 
     return {'status': 201, 'booking': {
         'id' : b.id,
@@ -114,23 +106,6 @@ def register_user():
     return render_template('register.html', err_msg=err_msg)
 
 
-#
-# @app.route('/booking-form', methods=['post', 'get'])
-# def add_booking():
-#     err_msg = ""
-#     if request.method.__eq__('POST'):
-#         try:
-#
-#             dao.add_booking(desc=request.form.get('descId'),
-#                             date=request.form.get('dateId'),
-#                             time=request.form.get('timeId'))
-#         except:
-#             err_msg = 'Hệ thống đang bận, vui lòng thử lại sau!'
-#         else:
-#             err_msg = "Cập nhật thành công"
-#         return redirect('/booking-form')
-#     return render_template('index.html', err_msg=err_msg)
-
 @app.route('/info', methods=['get','post'])
 def update():
     err_msg = ""
@@ -149,6 +124,29 @@ def update():
             err_msg = "Cập nhật thành công"
         return redirect('/info')
     return render_template('info.html', err_msg=err_msg)
+
+@app.route('/nurse')
+@login_required
+def nurse():
+    books = dao.load_booking()
+    patient = dao.load_patient()
+    return render_template('nurse.html', books=books,patient=patient, date = date.today())
+
+
+@app.route('/api/check-patient-count')
+def check_patient_count():
+    patients_today = Books.query.filter_by(booked_date=date.today()).filter_by(lenLichKham=True).count()
+    return jsonify({'patients_today': patients_today})
+
+@app.route('/len-ds', methods=['post'])
+def len_ds():
+    data = request.json
+    id = str(data.get('id'))
+    dao.sms(id)
+    dao.lenlichkham(id)
+    return jsonify({"message": "Đã lên lịch khám cho bệnh nhân"})
+
+
 
 
 if __name__ == '__main__':

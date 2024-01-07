@@ -1,9 +1,11 @@
+from datetime import date
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin, BaseView, expose
-from app import app, db
-from app.models import Time, Medicine, Books, Cashier, Patient, MedicalForm, Doctor, Prescription, Receipt, ReceiptDetails, Rules, Administrator
+from app import app, db, dao
+from app.models import Time, Medicine, Books, Cashier, Patient, MedicalForm, Doctor, Prescription, Receipt, ReceiptDetails, Rules, Administrator, Nurse
 from flask_login import logout_user, current_user
-from flask import redirect
+from flask import redirect, request, jsonify
+from app import utils
 
 
 admin = Admin(app=app, name="QUẢN TRỊ PHÒNG MẠCH TƯ", template_mode="bootstrap4")
@@ -14,6 +16,10 @@ class AuthenticatedUser(BaseView):
         return current_user.is_authenticated
 
 class AuthenticatedDoctor(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.type == 'doctor'
+
+class AuthenticatedDoctor2(BaseView):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.type == 'doctor'
 
@@ -33,15 +39,27 @@ class AuthenticatedNurse(ModelView):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.type == 'nurse'
 
+class AuthenticatedNurse2(BaseView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.type == 'nurse'
+
 class AuthenticatedCashier(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.type == 'cashier'
+
+class AuthenticatedCashierBV(BaseView):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.type == 'cashier'
 
 
 
 
-class TimeView(AuthenticatedAdmin):
-    can_export = True
+class PaymentView(AuthenticatedCashierBV):
+    @expose("/")
+    def index(self):
+        kw = request.args.get('kw')
+        patients = dao.load_patient(kw=kw)
+        return self.render("admin/payment-cash.html", patients=patients)
 
 class MedicineView(AuthenticatedAdmin, AuthenticatedDoctor):
     column_searchable_list = ['name']
@@ -53,8 +71,6 @@ class MedicineView(AuthenticatedAdmin, AuthenticatedDoctor):
 class BooksView(AuthenticatedNurse):                     #DS khám bệnh
     can_export = True
     column_list = ['id', 'patient', 'booked_date', 'time']
-    #column_filters = ['patient_name']
-
 
 
 class PatientView(AuthenticatedNurse):
@@ -63,32 +79,73 @@ class PatientView(AuthenticatedNurse):
     column_filters = ['gioiTinh', 'namSinh']
     column_searchable_list = ['name']
 
-class DoctorView(AuthenticatedAdmin):
-    column_list = ['name', 'ngayVaoLam']
-    column_searchable_list = ['name']
-    can_export = True
+class AllBooksModelView(AuthenticatedNurse2):
+    @expose("/")
+    def index(self):
+        books = dao.load_book()
+        return self.render("admin/nurse.html", books=books)
 
 
 class MedicalFormView(AuthenticatedDoctor):
     column_list = ['patient', 'description', 'disease', 'date', 'doctor']
 
+class AllMedicineModelView(AuthenticatedDoctor2):
+    @expose("/")
+    def index(self):
+        kw = request.args.get('kw')
+        medicine = dao.load_medicine(kw=kw)
+        return self.render("admin/medicine-list.html", medicine=medicine)
 
-    # def _format_filter_value(self, value):
-    #     patient = Patient.query.get(value)
-    #     return patient.name if patient else None
-
+class AllPatientModelView(AuthenticatedDoctor2):
+    @expose("/")
+    def index(self):
+        kw = request.args.get('kw')
+        patient = dao.load_patient(kw=kw)
+        book = dao.load_book()
+        return self.render("admin/patient-list.html", patient=patient, book=book, date=date.today())
 
 
 class PrescriptionView(AuthenticatedDoctor):
     column_list = ['id', 'medicalForm', 'medicalForm.date', 'medicine', 'quantity', 'guide']
 
 
-class ReceiptView(AuthenticatedCashier):
-    column_list = ['patient', 'created_date', 'cashier']
+class AllPhieuKhamView(AuthenticatedDoctor2):
+    @expose("/")
+    def index(self):
+        medicine = dao.load_medicine()
+        book = dao.load_book()
+        medicalForm = dao.load_medicalForm()
+        prescription = dao.load_prescription()
+        return self.render("admin/phieukham.html", medicine=medicine,book=book ,medicalForm=medicalForm, prescription=prescription)
+
+
+class AllDetailsModelView(AuthenticatedCashier):
+    @expose("/")
+    def index(self):
+        receipt = utils.get_receipt()
+        return self.render("admin/receipt-list.html", receipt=receipt)
+
 
 class ReceiptDetailsView(AuthenticatedCashier):
-    column_list = ['receipt', 'medicalForm', 'examines_price', 'medicine_price', 'total_price']
+    @expose("/")
+    def index(self):
+        receipt_details = utils.get_receipt_details()
+        return self.render("admin/receipt-details.html", receipt_details=receipt_details)
 
+
+
+
+class TimeView(AuthenticatedAdmin):
+    can_export = True
+
+class DoctorView(AuthenticatedAdmin):
+    column_list = ['name', 'ngayVaoLam']
+    column_searchable_list = ['name']
+    can_export = True
+
+class NurseView(AuthenticatedAdmin):
+    column_list = ['name']
+    can_export = True
 
 class CashierView(AuthenticatedAdmin):
     column_list = ['name']
@@ -111,22 +168,45 @@ class MyLogoutView(BaseView):
         return redirect('/admin')
 
 
+
+# @app.route('/len-pk', methods=['post'])
+# def len_pk(self):
+#     data = request.json
+#     id = str(data.get('id'))
+#     b_id = dao.load_patient2(id)
+#     return self.render("admin/patient-list.html", b_id=b_id)
+
+
+
+
 admin.add_view(TimeView(Time, db.session))
 admin.add_view(MedicineView(Medicine, db.session))
 
+admin.add_view(AllBooksModelView(name='Patient List Nurse'))
 admin.add_view(BooksView(Books, db.session))
 admin.add_view(PatientView(Patient, db.session))
-admin.add_view(DoctorView(Doctor, db.session))
+
+
+admin.add_view(AllPatientModelView(name='Patient List'))
+admin.add_view(AllMedicineModelView(name='Medicine List'))
+admin.add_view(AllPhieuKhamView(name='Lập Phiếu Khám'))
 
 admin.add_view(MedicalFormView(MedicalForm, db.session))
 admin.add_view(PrescriptionView(Prescription, db.session))
 
-admin.add_view(ReceiptView(Receipt, db.session))
-admin.add_view(ReceiptDetailsView(ReceiptDetails, db.session))
-admin.add_view(CashierView(Cashier, db.session))
 
+admin.add_view(AllDetailsModelView(Receipt, db.session,name="Receipt", category="Receipt" ))
+admin.add_view(ReceiptDetailsView(ReceiptDetails,  db.session,name="Receipt Details", category="Receipt"))
+admin.add_view(PaymentView(name='Lập hóa đơn'))
+
+
+
+admin.add_view(DoctorView(Doctor, db.session))
+admin.add_view(NurseView(Nurse, db.session))
+admin.add_view(CashierView(Cashier, db.session))
 admin.add_view(RulesView(Rules, db.session))
 admin.add_view(AdminView(Administrator, db.session))
+
 
 
 admin.add_view(MyStatsView(name='Thống kê báo cáo'))

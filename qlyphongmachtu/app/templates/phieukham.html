@@ -1,0 +1,63 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Phiếu Khám Bệnh</h1>
+
+    <form>
+        <div class="form-group">
+            <label>Người khám:</label>
+            <input id="bookIdInput" type="text" class="form-control" readonly>
+        </div>
+        <div class="form-group">
+            <label for="symptom">Triệu chứng:</label>
+            <input type="text" class="form-control" id="symptom" name="symptom" placeholder="Nhập triệu chứng...">
+        </div>
+
+        <div class="form-group">
+            <label for="diagnosis">Chuẩn đoán bệnh:</label>
+            <input type="text" class="form-control" id="diagnosis" name="diagnosis"
+                   placeholder="Nhập chuẩn đoán bệnh...">
+        </div>
+
+        <table id="medicine-table" class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Tên thuốc</th>
+                <th>Số lượng</th>
+                <th>Cách dùng</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <select name="medicine[]" class="form-control">
+                        <option value="">Chọn tên thuốc...</option>
+                        {% for m in medicine %}
+                        <option value="{{ m }}">{{ m }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <input type="number" name="quantity[]" class="form-control" placeholder="Số lượng">
+                </td>
+                <td>
+                    <textarea name="usage[]" class="form-control" placeholder="Cách dùng"></textarea>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <button type="button" class="btn btn-primary" onclick="addMedicineRow()">Thêm thuốc</button>
+        <br><br>
+
+        <input type="submit" class="btn btn-success" value="Lưu thông tin">
+    </form>
+</div>
+<script>
+    var urlParams = new URLSearchParams(window.location.search);
+    var bookId = urlParams.get('bookId');
+    var bookIdInput = document.getElementById('bookIdInput');
+    bookIdInput.value = bookId;
+</script>
+{% endblock %}
