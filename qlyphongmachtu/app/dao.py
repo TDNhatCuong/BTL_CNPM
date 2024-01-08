@@ -1,6 +1,8 @@
 import hashlib
-from app import app,db
-from app.models import Patient, Account, Books, Time, Medicine, MedicalForm, Prescription, Cashier
+from datetime import date, datetime
+
+from app import db
+from app.models import Patient, Account, Books, Time, Medicine, MedicalForm, Prescription, Cashier, Receipt, Rules
 import cloudinary.uploader
 from flask_login import current_user
 
@@ -27,7 +29,7 @@ def load_patient():
     return Patient.query.all()
 
 
-def load_patientC(kw=None):
+def load_patient(kw=None):
     patients = Patient.query
     if kw:
         patients = patients.filter(Patient.name.contains(kw))
@@ -49,6 +51,7 @@ def load_medicine(kw=None):
         medicines = medicines.filter(Medicine.name.contains(kw))
 
     return medicines.all()
+
 
 def load_medicine():
     return Medicine.query.all()
@@ -109,6 +112,7 @@ def lenphieukham(id):
 
     return p
 
+
 def lenphieukhamxong(id):
     b = Books.query.filter_by(id=id).first()
     b.isKham = True
@@ -119,6 +123,7 @@ def book_off(name, sdt, namSinh, diaChi, gioiTinh):
     p = Patient(name=name, sdt=sdt, namSinh=namSinh, diaChi=diaChi, gioiTinh=gioiTinh)
     db.session.add(p)
     db.session.commit()
+
     return p
 
 
@@ -126,6 +131,22 @@ def add_book_offline(time, id,desc):
     b = Books(time_id=time,patient_id=id, desc=desc)
     db.session.add(b)
     db.session.commit()
+
+
+
+def add_medical_form(id, description, disease):
+    mf = MedicalForm(patient_id=id, description=description, disease=disease, date=date.today(), doctor_id=current_user.id)
+    db.session.add(mf)
+    db.session.commit()
+
+    return mf.id
+
+def add_prescription( medicine, quantity, guide, id):
+    me = Medicine.query.filter_by(name=medicine).first()
+    pr = Prescription(medicalForm_id=id, medicine_id=me.id, quantity=quantity, guide=guide)
+    db.session.add(pr)
+    db.session.commit()
+
 
 
 def sms(id):
@@ -156,3 +177,19 @@ def sms(id):
     # )
     # print(message.sid)
     pass
+
+def lenhoadon(id):
+    medical_form = MedicalForm.query.get(id)
+    patient = Patient.query.get(medical_form.patient_id)
+    return patient.id
+
+def load_examines_price():
+    return Rules.query.filter_by(name='tienkham').first().value
+
+def add_receipt(patient_id, examines_price, total):
+    r = Receipt(id=id,created_date=datetime.now().date(),cashier_id=current_user.id,patient_id=patient_id
+                ,examines_price=examines_price,total_price=total, is_receipt=True)
+    db.session.add(r)
+    db.session.commit()
+
+

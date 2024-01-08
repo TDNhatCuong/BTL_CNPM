@@ -1,10 +1,12 @@
 from datetime import date
 from flask import Flask, render_template, request, redirect, jsonify
 from flask import request
-from app import dao, login
+from sqlalchemy import Float
+
+from app import dao, login, utils
 from app import app, db
 from flask_login import login_user, logout_user, login_required, current_user
-from app.models import Books
+from app.models import Books, MedicalForm, Prescription
 
 
 @app.route('/')
@@ -22,10 +24,16 @@ def login_admin_process():
         login_user(user=user)
         if current_user.type == 'patient':
             return redirect("/")
+        elif current_user.type == 'doctor':
+            return redirect('/patient-list')
+        elif current_user.type == 'nurse':
+            return redirect('/nurse')
+        elif current_user.type == 'cashier':
+            return redirect('/phieukham-list')
         else:
             return redirect('/admin')
 
-    return redirect('/admin')
+    return render_template("login.html")
 
 
 @app.route('/booking-form')
@@ -69,6 +77,12 @@ def login_user_process():
             login_user(user=user)
             if current_user.type == 'patient':
                 return redirect("/")
+            elif current_user.type == 'doctor':
+                return redirect('/patient-list')
+            elif current_user.type == 'nurse':
+                return redirect('/nurse')
+            elif current_user.type == 'cashier':
+                return redirect('/phieukham-list')
             else:
                 return redirect('/admin')
 
@@ -158,19 +172,40 @@ def patient_list():
     return render_template('patient-list.html', books=books, patient=patient, date=date.today())
 
 
-@app.route('/books/<id>')
+@app.route('/books/<id>', methods=['get', 'post'])
 @login_required
 def phieukham(id):
     return render_template('phieukham.html', p=dao.lenphieukham(id), medicine=dao.load_medicine())
 
 
+@app.route('/books', methods=['get', 'post'])
+def phieukhamabc():
+    if request.method.__eq__('POST'):
+        patient_id = request.form.get('p_id'),
+        description = request.form.get('description')
+        disease = request.form.get('disease')
+        medicine = request.form.get('medicine')
+        quantity = request.form.get('quantity')
+        guide = request.form.get('guide')
+        try:
+           mf = dao.add_medical_form(patient_id, description, disease)
+           dao.add_prescription(medicine, quantity, guide, mf)
+        except:
+            err_msg = 'Hệ thống đang bận, vui lòng thử lại sau!'
+        else:
+            err_msg = "Cập nhật thành công"
+            return redirect('/patient-list')
+    return render_template('phieukham.html', p=patient_id, medicine=dao.load_medicine())
+
+@app.route('/phieukham-list')
+def medicalform_list():
+    lapphieukham = utils.get_info_medical_form()
+    return render_template('phieukham-list.html', lapphieukham=lapphieukham)
+
+
 @app.route('/len-pk', methods=['post'])
 def len_pk():
-    data = request.json
-    id = str(data.get('id'))
-    p = dao.lenphieukham(id)
-    # return redirect('/phieukham')
-    return render_template('phieukham.html', p=p)
+    return render_template('phieukham.html')
 
 
 @app.route('/book-offline', methods=['get', 'post'])
@@ -192,6 +227,55 @@ def book_offline():
             return redirect('/nurse')
 
     return render_template('book-offline.html', time=dao.load_time())
+
+def medicalform_list():
+    lapphieukham = utils.get_info_medical_form()
+    return render_template('phieukham-list.html', lapphieukham=lapphieukham)
+
+
+
+@app.route('/receipt-details')
+@login_required
+def ReceiptDetailsView():
+    receipt_details = utils.get_receipt_details()
+    return render_template('receipt-details.html', receipt_details=receipt_details)
+
+
+@app.route('/MedicalForm/<id>', methods=['get', 'post'])
+def CreateReceipt(id):
+    print(id)
+    tienkham = dao.load_examines_price()
+    lapphieukham = utils.get_info_medical_form()
+    p = dao.lenhoadon(id)
+    int(p)
+    return render_template('create-receipt.html', p=p
+                           , lapphieukham=lapphieukham, tienkham=tienkham)
+
+
+@app.route('/api/receipt-form', methods=['post'])
+def Payment():
+    data = request.json
+    examines_price = data.get('examines_price')
+    total = data.get('total')
+    patient_id = data.get('patient_id')
+    try:
+        examines_price = Float(examines_price)
+        total = Float(total)
+    except (ValueError, TypeError):
+        examines_price = None
+        total = None
+    try:
+        b = dao.add_receipt(patient_id=patient_id, examines_price=examines_price, total=total)
+    except  Exception as e:
+        print(str(e))
+        return {'status': 404, 'err_msg': 'Chương trình đang bị lỗi'}
+
+    return {'status': 201, 'receipt': {
+        'patient_id': b.patient_id,
+        'examines_price': b.examines_price,
+        'total': b.total
+        }
+    }
 
 
 if __name__ == '__main__':

@@ -63,52 +63,7 @@ function lenphieukham(id) {
     }).then(function (data){
         window.location.href = "/phieukham" ;
     });
-//    .then(function (data) {
-//        window.location.reload();
-//        alert('Đã lập phiếu khám thành công!');
-//    })
 }
-
-
-
-
-function addPK() {
-    let desc = document.getElementById('description').value;
-    let dise = document.getElementById('disease').value;
-    let medicineTables = document.querySelectorAll("#medicine-table");
-
-    medicineTables.forEach(function(table) {
-        let medcineName = table.querySelector(".medcine-name select").value;
-        let medcineQuantity = table.querySelector(".medcine-quantity input").value;
-        let medcineUsage = table.querySelector(".medcine-usage textarea").value;
-    });
-
-    fetch('api/phieukham', {
-        method: 'post',
-        body: JSON.stringify({
-            'desc': desc.value,
-            'dise': dise.value,
-            'mediName': medcineName.value[0]
-            'mediQuantity': medcineQuantity.value[0]
-            'mediUsage': medcineUsage.value[0]
-        }),
-        headers: {
-            'Content-Type': "application/json"
-        }
-    }).then(function (res) {
-            return res.json();
-
-    }).then(function (data) {
-            if (data.status == 201) {
-                alert('Đặt lịch hành công')
-            } else if (data.status == 404) {
-                alert('Đặt lịch thất bại')
-            }
-        })
-    }
-}
-
-
 
 
 function checkPatientCount() {
@@ -136,4 +91,31 @@ window.onload = function () {
 };
 
 
+function addReceipt() {
+    let examines_price = document.getElementById('examinespriceId')
+    let total = document.getElementById('totalId')
+    let patient_id = document.getElementById('patientId')
+    if (examines_price !== null) {
+        fetch('/api/receipt-form', {
+            method: 'post',
+            body: JSON.stringify({
+                'examines_price': examines_price.value,
+                'total': total.value,
+                'patient_id': patient_id.value
+            }),
+            headers: {
+                'Content-Type': "application/json"
+            }
+        }).then(function (res) {
+            return res.json();
+
+        }).then(function (data) {
+            if (data.status == 201) {
+                alert('Thanh toán thành công')
+            } else if (data.status == 404) {
+                alert('Thanh toán thất bại')
+            }
+        })
+    }
+}
 

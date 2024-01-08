@@ -25,3 +25,20 @@ def get_receipt_details():
             .join(Receipt, Receipt.id == ReceiptDetails.receipt_id)
     return query.group_by(Medicine.id, Prescription.quantity).all()
 
+def get_medical_form():
+    query = db.session.query(MedicalForm.id, MedicalForm.date, MedicalForm.description,
+             MedicalForm.disease,Doctor.name,Patient.name, Books.isKham)\
+            .join(Patient, Patient.id == MedicalForm.patient_id)\
+            .join(Doctor, Doctor.id == MedicalForm.doctor_id)\
+            .join(Books, Books.patient_id == Patient.id)
+
+    return query.all()
+
+
+def get_info_medical_form():
+    query = db.session.query(Patient.name, Medicine.name, Prescription.quantity,
+                 func.sum(Prescription.quantity * Medicine.price), Patient.id, MedicalForm.id)\
+                .join(Prescription, Prescription.medicine_id == Medicine.id)\
+                .join(MedicalForm, Prescription.medicalForm_id == MedicalForm.id)\
+                .join(Patient, MedicalForm.patient_id == Patient.id)
+    return query.group_by(Patient.id, Medicine.name, Prescription.quantity, MedicalForm.id).all()

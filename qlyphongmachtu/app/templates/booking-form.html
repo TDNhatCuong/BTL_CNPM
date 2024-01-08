@@ -4,7 +4,7 @@
 
 {% block content %}
 
-{% if current_user.is_authenticated %}
+{% if current_user.is_authenticated and current_user.type=='patient' %}
 <section>
     <div id="booking" class="section">
         <div class="section-center">

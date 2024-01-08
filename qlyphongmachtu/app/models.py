@@ -92,6 +92,7 @@ class Cashier(Account):
     def __str__(self):
         return self.name
 
+
 class Time(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     period = Column(String(20), nullable=False)
@@ -184,13 +185,12 @@ class ReceiptDetails(db.Model):
 class Rules(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     change_date = Column(Date, default=datetime.now().date())
-    quantity_patient = Column(Integer, default=40)
-    examines_price = Column(Float, default=100000)
+    name = Column(String(50), nullable=False)
+    value = Column(Integer, nullable=False)
     admin_id = Column(Integer, ForeignKey(Administrator.id), nullable=False)
 
     def __repr__(self):
         return f"<YourModel(booked_date='{self.booked_date.strftime('%Y-%m-%d')}')>"
-
 
 
 
@@ -287,4 +287,13 @@ if __name__ == "__main__":
         #     b = Books(patient_id=i, booked_date='2024-01-07', time_id=1, lenLichKham=False, isKham=False)
         #     db.session.add(b)
         #
+        # db.session.commit()
+
+        # r1 = Rules(name="quantity_patient", value=40, admin_id=1)
+        # r2 = Rules(name="Số thuốc", value=30, admin_id=1)
+        # r3 = Rules(name="tienkham", value=100000, admin_id=1)
+        #
+        # db.session.add(r1)
+        # db.session.add(r2)
+        # db.session.add(r3)
         # db.session.commit()
