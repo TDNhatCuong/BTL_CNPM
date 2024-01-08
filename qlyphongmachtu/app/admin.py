@@ -79,51 +79,51 @@ class PatientView(AuthenticatedNurse):
     column_filters = ['gioiTinh', 'namSinh']
     column_searchable_list = ['name']
 
-class AllBooksModelView(AuthenticatedNurse2):
-    @expose("/")
-    def index(self):
-        books = dao.load_book()
-        return self.render("admin/nurse.html", books=books)
+# class AllBooksModelView(AuthenticatedNurse2):
+#     @expose("/")
+#     def index(self):
+#         books = dao.load_book()
+#         return self.render("admin/nurse.html", books=books)
 
 
 class MedicalFormView(AuthenticatedDoctor):
     column_list = ['patient', 'description', 'disease', 'date', 'doctor']
 
-class AllMedicineModelView(AuthenticatedDoctor2):
-    @expose("/")
-    def index(self):
-        kw = request.args.get('kw')
-        medicine = dao.load_medicine(kw=kw)
-        return self.render("admin/medicine-list.html", medicine=medicine)
+# class AllMedicineModelView(AuthenticatedDoctor2):
+#     @expose("/")
+#     def index(self):
+#         kw = request.args.get('kw')
+#         medicine = dao.load_medicine(kw=kw)
+#         return self.render("admin/medicine-list.html", medicine=medicine)
 
-class AllPatientModelView(AuthenticatedDoctor2):
-    @expose("/")
-    def index(self):
-        kw = request.args.get('kw')
-        patient = dao.load_patient(kw=kw)
-        book = dao.load_book()
-        return self.render("admin/patient-list.html", patient=patient, book=book, date=date.today())
+# class AllPatientModelView(AuthenticatedDoctor2):
+#     @expose("/")
+#     def index(self):
+#         kw = request.args.get('kw')
+#         patient = dao.load_patient(kw=kw)
+#         book = dao.load_book()
+#         return self.render("admin/patient-list.html", patient=patient, book=book, date=date.today())
 
 
 class PrescriptionView(AuthenticatedDoctor):
     column_list = ['id', 'medicalForm', 'medicalForm.date', 'medicine', 'quantity', 'guide']
 
 
-class AllPhieuKhamView(AuthenticatedDoctor2):
-    @expose("/")
-    def index(self):
-        medicine = dao.load_medicine()
-        book = dao.load_book()
-        medicalForm = dao.load_medicalForm()
-        prescription = dao.load_prescription()
-        return self.render("admin/phieukham.html", medicine=medicine,book=book ,medicalForm=medicalForm, prescription=prescription)
+# class AllPhieuKhamView(AuthenticatedDoctor2):
+#     @expose("/")
+#     def index(self):
+#         medicine = dao.load_medicine()
+#         book = dao.load_book()
+#         medicalForm = dao.load_medicalForm()
+#         prescription = dao.load_prescription()
+#         return self.render("admin/phieukham.html", medicine=medicine,book=book ,medicalForm=medicalForm, prescription=prescription)
 
 
-class AllDetailsModelView(AuthenticatedCashier):
-    @expose("/")
-    def index(self):
-        receipt = utils.get_receipt()
-        return self.render("admin/receipt-list.html", receipt=receipt)
+# class AllDetailsModelView(AuthenticatedCashier):
+#     @expose("/")
+#     def index(self):
+#         receipt = utils.get_receipt()
+#         return self.render("admin/receipt-list.html", receipt=receipt)
 
 
 class ReceiptDetailsView(AuthenticatedCashier):
@@ -182,20 +182,20 @@ class MyLogoutView(BaseView):
 admin.add_view(TimeView(Time, db.session))
 admin.add_view(MedicineView(Medicine, db.session))
 
-admin.add_view(AllBooksModelView(name='Patient List Nurse'))
+# admin.add_view(AllBooksModelView(name='Patient List Nurse'))
 admin.add_view(BooksView(Books, db.session))
 admin.add_view(PatientView(Patient, db.session))
 
 
-admin.add_view(AllPatientModelView(name='Patient List'))
-admin.add_view(AllMedicineModelView(name='Medicine List'))
-admin.add_view(AllPhieuKhamView(name='Lập Phiếu Khám'))
+# admin.add_view(AllPatientModelView(name='Patient List'))
+# admin.add_view(AllMedicineModelView(name='Medicine List'))
+# admin.add_view(AllPhieuKhamView(name='Lập Phiếu Khám'))
 
 admin.add_view(MedicalFormView(MedicalForm, db.session))
 admin.add_view(PrescriptionView(Prescription, db.session))
 
 
-admin.add_view(AllDetailsModelView(Receipt, db.session,name="Receipt", category="Receipt" ))
+# admin.add_view(AllDetailsModelView(Receipt, db.session,name="Receipt", category="Receipt" ))
 admin.add_view(ReceiptDetailsView(ReceiptDetails,  db.session,name="Receipt Details", category="Receipt"))
 admin.add_view(PaymentView(name='Lập hóa đơn'))
 

@@ -26,6 +26,7 @@ def load_time():
 def load_patient():
     return Patient.query.all()
 
+
 def load_patientC(kw=None):
     patients = Patient.query
     if kw:
@@ -48,6 +49,9 @@ def load_medicine(kw=None):
         medicines = medicines.filter(Medicine.name.contains(kw))
 
     return medicines.all()
+
+def load_medicine():
+    return Medicine.query.all()
 
 def load_medicalForm():
     return MedicalForm.query.all()
@@ -94,6 +98,33 @@ def update_info(namSinh,sdt,diaChi,avatar,Patient_id, gioiTinh):
 def lenlichkham(id):
     b = Books.query.filter_by(id=id).first()
     b.lenLichKham = True
+    db.session.commit()
+
+
+def lenphieukham(id):
+    b = Books.query.filter_by(id=id).first()
+    p = Patient.query.filter_by(id=b.patient_id).first()
+    b.isKham = True
+    db.session.commit()
+
+    return p
+
+def lenphieukhamxong(id):
+    b = Books.query.filter_by(id=id).first()
+    b.isKham = True
+    db.session.commit()
+
+
+def book_off(name, sdt, namSinh, diaChi, gioiTinh):
+    p = Patient(name=name, sdt=sdt, namSinh=namSinh, diaChi=diaChi, gioiTinh=gioiTinh)
+    db.session.add(p)
+    db.session.commit()
+    return p
+
+
+def add_book_offline(time, id,desc):
+    b = Books(time_id=time,patient_id=id, desc=desc)
+    db.session.add(b)
     db.session.commit()
 
 

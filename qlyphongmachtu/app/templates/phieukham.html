@@ -7,16 +7,17 @@
     <form>
         <div class="form-group">
             <label>Người khám:</label>
-            <input id="bookIdInput" type="text" class="form-control" readonly>
+            <h3>{{ p.name }}</h3>
         </div>
         <div class="form-group">
-            <label for="symptom">Triệu chứng:</label>
-            <input type="text" class="form-control" id="symptom" name="symptom" placeholder="Nhập triệu chứng...">
+            <label for="description">Triệu chứng:</label>
+            <input type="text" class="form-control" id="description" name="description"
+                   placeholder="Nhập triệu chứng...">
         </div>
 
         <div class="form-group">
-            <label for="diagnosis">Chuẩn đoán bệnh:</label>
-            <input type="text" class="form-control" id="diagnosis" name="diagnosis"
+            <label for="disease">Chuẩn đoán bệnh:</label>
+            <input type="text" class="form-control" id="disease" name="disease"
                    placeholder="Nhập chuẩn đoán bệnh...">
         </div>
 
@@ -30,7 +31,7 @@
             </thead>
             <tbody>
             <tr>
-                <td>
+                <td id="medcine-name">
                     <select name="medicine[]" class="form-control">
                         <option value="">Chọn tên thuốc...</option>
                         {% for m in medicine %}
@@ -38,26 +39,71 @@
                         {% endfor %}
                     </select>
                 </td>
-                <td>
+                <td id="medcine-quantity">
                     <input type="number" name="quantity[]" class="form-control" placeholder="Số lượng">
                 </td>
-                <td>
+                <td id="medcine-usage">
                     <textarea name="usage[]" class="form-control" placeholder="Cách dùng"></textarea>
                 </td>
             </tr>
             </tbody>
         </table>
 
-        <button type="button" class="btn btn-primary" onclick="addMedicineRow()">Thêm thuốc</button>
+        <button type="button" class="btn btn-primary" id="addthuoc">Thêm thuốc</button>
         <br><br>
 
-        <input type="submit" class="btn btn-success" value="Lưu thông tin">
+        <button class="submit-btn btn btn-primary" id="pkGo" onclick="addPK()">Đặt lịch khám</button>
     </form>
 </div>
 <script>
-    var urlParams = new URLSearchParams(window.location.search);
-    var bookId = urlParams.get('bookId');
-    var bookIdInput = document.getElementById('bookIdInput');
-    bookIdInput.value = bookId;
+    document.querySelector("#addthuoc").addEventListener("click", function() {
+        // Tạo hàng mới trong bảng
+        var newRow = document.createElement("tr");
+
+        // Tạo các ô trong hàng mới
+        var cell1 = document.createElement("td");
+        var cell2 = document.createElement("td");
+        var cell3 = document.createElement("td");
+
+        // Tạo select box
+        var select = document.createElement("select");
+        select.name = "medicine[]";
+        select.className = "form-control";
+
+        // Thêm các tùy chọn vào select box
+        var options = document.querySelectorAll("#medicine-table tbody tr:first-child select option");
+        for (var i = 0; i < options.length; i++) {
+            var option = document.createElement("option");
+            option.value = options[i].value;
+            option.text = options[i].text;
+            select.appendChild(option);
+        }
+
+        // Tạo input số lượng
+        var quantityInput = document.createElement("input");
+        quantityInput.type = "number";
+        quantityInput.name = "quantity[]";
+        quantityInput.className = "form-control";
+        quantityInput.placeholder = "Số lượng";
+
+        // Tạo textarea cách dùng
+        var usageTextarea = document.createElement("textarea");
+        usageTextarea.name = "usage[]";
+        usageTextarea.className = "form-control";
+        usageTextarea.placeholder = "Cách dùng";
+
+        // Gắn các phần tử vào ô tương ứng
+        cell1.appendChild(select);
+        cell2.appendChild(quantityInput);
+        cell3.appendChild(usageTextarea);
+
+        // Gắn các ô vào hàng mới
+        newRow.appendChild(cell1);
+        newRow.appendChild(cell2);
+        newRow.appendChild(cell3);
+
+        // Gắn hàng mới vào tbody của bảng
+        document.querySelector("#medicine-table tbody").appendChild(newRow);
+    });
 </script>
 {% endblock %}

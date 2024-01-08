@@ -11,6 +11,7 @@ from app.models import Books
 def index():
     return render_template('index.html')
 
+
 @app.route('/admin/login', methods=['post'])
 def login_admin_process():
     email = request.form.get('email')
@@ -32,6 +33,7 @@ def booking():
     time = dao.load_time()
     return render_template('booking-form.html', time=time)
 
+
 @app.route('/api/booking-form', methods=['post'])
 @login_required
 def add_booking():
@@ -41,7 +43,7 @@ def add_booking():
     time = data.get('time_id')
     print(time)
     try:
-        b = dao.add_booking(desc=desc, date=date,time=time)
+        b = dao.add_booking(desc=desc, date=date, time=time)
         print(time)
         print('KHONG LOI')
     except  Exception as e:
@@ -49,12 +51,12 @@ def add_booking():
         return {'status': 404, 'err_msg': 'Chương trình đang bị lỗi'}
 
     return {'status': 201, 'booking': {
-        'id' : b.id,
-        'desc' : b.desc,
-        'date' : b.booked_date,
-        'time_id' : b.time_id
-        }
+        'id': b.id,
+        'desc': b.desc,
+        'date': b.booked_date,
+        'time_id': b.time_id
     }
+            }
 
 
 @app.route("/login", methods=['get', 'post'])
@@ -73,11 +75,10 @@ def login_user_process():
     return render_template("login.html")
 
 
-
-
 @login.user_loader
 def get_user(user_id):
     return dao.get_user_by_id(user_id)
+
 
 @app.route('/logout')
 def process_logout_user():
@@ -106,7 +107,7 @@ def register_user():
     return render_template('register.html', err_msg=err_msg)
 
 
-@app.route('/info', methods=['get','post'])
+@app.route('/info', methods=['get', 'post'])
 def update():
     err_msg = ""
 
@@ -125,18 +126,20 @@ def update():
         return redirect('/info')
     return render_template('info.html', err_msg=err_msg)
 
+
 @app.route('/nurse')
 @login_required
 def nurse():
     books = dao.load_booking()
     patient = dao.load_patient()
-    return render_template('nurse.html', books=books,patient=patient, date = date.today())
+    return render_template('nurse.html', books=books, patient=patient, date=date.today())
 
 
 @app.route('/api/check-patient-count')
 def check_patient_count():
     patients_today = Books.query.filter_by(booked_date=date.today()).filter_by(lenLichKham=True).count()
     return jsonify({'patients_today': patients_today})
+
 
 @app.route('/len-ds', methods=['post'])
 def len_ds():
@@ -147,8 +150,51 @@ def len_ds():
     return jsonify({"message": "Đã lên lịch khám cho bệnh nhân"})
 
 
+@app.route('/patient-list')
+@login_required
+def patient_list():
+    books = dao.load_book()
+    patient = dao.load_patient()
+    return render_template('patient-list.html', books=books, patient=patient, date=date.today())
+
+
+@app.route('/books/<id>')
+@login_required
+def phieukham(id):
+    return render_template('phieukham.html', p=dao.lenphieukham(id), medicine=dao.load_medicine())
+
+
+@app.route('/len-pk', methods=['post'])
+def len_pk():
+    data = request.json
+    id = str(data.get('id'))
+    p = dao.lenphieukham(id)
+    # return redirect('/phieukham')
+    return render_template('phieukham.html', p=p)
+
+
+@app.route('/book-offline', methods=['get', 'post'])
+def book_offline():
+    if request.method.__eq__('POST'):
+        time = request.form.get('timeId')
+        try:
+            p = dao.book_off(name=request.form.get('name'),
+                             sdt=request.form.get('sdt'),
+                             namSinh=request.form.get('namSinh'),
+                             gioiTinh=request.form.get('gioiTinh'),
+                             diaChi=request.form.get('diaChi'), )
+
+            dao.add_book_offline(time=int(time), desc=request.form.get('desc'), id=p.id)
+        except:
+            err_msg = 'Hệ thống đang bận, vui lòng thử lại sau!'
+        else:
+            err_msg = "Cập nhật thành công"
+            return redirect('/nurse')
+
+    return render_template('book-offline.html', time=dao.load_time())
 
 
 if __name__ == '__main__':
     from app import admin
+
     app.run(debug=True)

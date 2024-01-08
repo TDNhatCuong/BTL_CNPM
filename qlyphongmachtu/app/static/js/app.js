@@ -27,6 +27,7 @@ function addBook() {
     }
 }
 
+
 function lenlich(id) {
     checkPatientCount();
     fetch('/len-ds', {
@@ -44,8 +45,70 @@ function lenlich(id) {
         window.location.reload();
         alert('Đã thêm thành công bệnh nhân!');
     })
-
 }
+
+
+function lenphieukham(id) {
+    fetch('/len-pk', {
+        method: "post",
+        body: JSON.stringify({
+            "id": id,
+        }),
+        headers: {
+            'Content-Type': "application/json"
+        }
+    }).then(function (res) {
+        return res.json();
+
+    }).then(function (data){
+        window.location.href = "/phieukham" ;
+    });
+//    .then(function (data) {
+//        window.location.reload();
+//        alert('Đã lập phiếu khám thành công!');
+//    })
+}
+
+
+
+
+function addPK() {
+    let desc = document.getElementById('description').value;
+    let dise = document.getElementById('disease').value;
+    let medicineTables = document.querySelectorAll("#medicine-table");
+
+    medicineTables.forEach(function(table) {
+        let medcineName = table.querySelector(".medcine-name select").value;
+        let medcineQuantity = table.querySelector(".medcine-quantity input").value;
+        let medcineUsage = table.querySelector(".medcine-usage textarea").value;
+    });
+
+    fetch('api/phieukham', {
+        method: 'post',
+        body: JSON.stringify({
+            'desc': desc.value,
+            'dise': dise.value,
+            'mediName': medcineName.value[0]
+            'mediQuantity': medcineQuantity.value[0]
+            'mediUsage': medcineUsage.value[0]
+        }),
+        headers: {
+            'Content-Type': "application/json"
+        }
+    }).then(function (res) {
+            return res.json();
+
+    }).then(function (data) {
+            if (data.status == 201) {
+                alert('Đặt lịch hành công')
+            } else if (data.status == 404) {
+                alert('Đặt lịch thất bại')
+            }
+        })
+    }
+}
+
+
 
 
 function checkPatientCount() {
