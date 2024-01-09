@@ -1,24 +1,24 @@
 {% extends '/admin/base.html' %}
 
 {% block body %}
-<h1 class="text-center text-danger">THỐNG KÊ DOANH THU KHÁM BỆNH THEO THÁNG</h1>
+<h1 class="text-center text-danger">THỐNG KÊ TẦN SUẤT KHÁM</h1>
 
 <div class="row">
     <div class="col-md-5 col-xs-12">
         <table class="table">
             <tr>
-                <th>Tháng lập</th>
-                <th>Doanh thu</th>
+                <th>Tháng</th>
+                <th>Tần suất</th>
             </tr>
 
-            {% for s in doanhthu %}
+            {% for s in tanSuatKham %}
             <tr>
                 <td>{{ s[0] }}</td>
                 <td>
                     {% if s[1] %}
-                        {{ "{:,.0f}".format(s[1]) }} VND
+                        {{ "{:,.1f}".format(s[1]) }} %
                     {% else %}
-                        0 VND
+                        0 %
                     {% endif %}
                 </td>
             </tr>
@@ -36,7 +36,7 @@
             <input type="submit" value="Thống kê" class="btn btn-info" />
         </form>
 
-        <canvas id="myMoneyChart"></canvas>
+        <canvas id="tuanSuatChart"></canvas>
     </div>
 </div>
 
@@ -46,25 +46,26 @@
     let borderColors = [], colors = []
 
 
-    {% for s in doanhthu %}
+    {% for s in tanSuatKham %}
         name.push('{{ s[0] }}')
         info.push({{ s[1] }})
 
-
+          // Tạo một màu mới ngẫu nhiên
         let r = Math.random() * 255;
         let g = Math.random() * 255;
         let b = Math.random() * 255;
 
-
+        // Tạo chuỗi mô tả màu mới
         let newColor = `rgba(${r}, ${g}, ${b}, 0.5)`;
 
-
+        // Thêm màu mới vào mảng colors và borderColors
         colors.push(newColor);
         borderColors.push(newColor)
+
     {% endfor %}
 
     window.onload = function() {
-        const ctx  = document.getElementById('myMoneyChart').getContext('2d');
+        const ctx  = document.getElementById('tuanSuatChart').getContext('2d');
 
         loadChart(ctx, name, info, 'doughnut', colors, borderColors);
     }

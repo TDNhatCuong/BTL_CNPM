@@ -1,7 +1,9 @@
 import hashlib
 from datetime import date, datetime
 
-from app import db
+from sqlalchemy import extract, func
+
+from app import app,db
 from app.models import Patient, Account, Books, Time, Medicine, MedicalForm, Prescription, Cashier, Receipt, Rules
 import cloudinary.uploader
 from flask_login import current_user
@@ -178,6 +180,8 @@ def sms(id):
     # print(message.sid)
     pass
 
+
+
 def lenhoadon(id):
     medical_form = MedicalForm.query.get(id)
     patient = Patient.query.get(medical_form.patient_id)
@@ -193,3 +197,49 @@ def add_receipt(patient_id, examines_price, total):
     db.session.commit()
 
 
+
+def su_dung_thuoc(month):
+    with app.app_context():
+        # Tạo truy vấn cơ bản
+        query = db.session.query(
+            Medicine.name,
+            extract('month', MedicalForm.date).label('Tháng'),
+            (func.sum(Prescription.quantity) / 30 * 100).label('Tần suất sử dụng')
+        )\
+        .join(Prescription, Prescription.medicine_id == Medicine.id)\
+        .join(MedicalForm, MedicalForm.id == Prescription.medicalForm_id)\
+        .group_by(Medicine.name, extract('month', MedicalForm.date))
+
+        results = query.all()
+
+        return results
+
+
+
+def tan_suat_kham(month):
+    with app.app_context():
+        query = db.session.query(
+            extract('month', MedicalForm.date).label('Tháng'),
+            (func.count(MedicalForm.id) / 30*100).label('Tần suất khám')
+        ).group_by(extract('month', MedicalForm.date))
+
+
+        results = query.all()
+
+        return results
+
+
+
+
+
+
+def doanh_thu_thang(month):
+    with app.app_context():
+        query = db.session.query(
+            extract('month', Receipt.created_date).label('Tháng'),
+            func.sum(Receipt.total_price).label('Doanh thu')
+        ).group_by(extract('month', Receipt.created_date))
+
+        results = query.all()
+
+        return results

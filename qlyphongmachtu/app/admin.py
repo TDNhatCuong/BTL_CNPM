@@ -46,6 +46,7 @@ class AuthenticatedCashierBV(BaseView):
 
 
 
+
 class MedicineView(AuthenticatedAdmin):
     column_searchable_list = ['name']
     column_filters = ['price', 'name']
@@ -100,9 +101,31 @@ class AdminView(AuthenticatedAdmin):
     column_list = ['name', 'joined_date']
 
 class MyStatsView(AuthenticatedAdmin2):
-    @expose("/")
+    @expose('/')
     def index(self):
-        return self.render('admin/stats.html')
+        month = request.args.get('month')
+
+        return self.render('admin/stats.html',
+                           doanhthu=dao.doanh_thu_thang(month=month))
+
+
+class TanSuatKham(AuthenticatedAdmin2):
+    @expose('/')
+    def index(self):
+        month = request.args.get('month')
+
+        return self.render('admin/tansuatkham.html',
+                           tanSuatKham=dao.tan_suat_kham(month=month))
+
+
+
+class TanSuatThuoc(AuthenticatedAdmin2):
+    @expose('/')
+    def index(self):
+        month = request.args.get('month')
+
+        return self.render('admin/sudungthuoc.html',
+                           tanSuatThuoc=dao.su_dung_thuoc(month=month))
 
 class MyLogoutView(BaseView):
     @expose('/')
@@ -124,6 +147,10 @@ admin.add_view(MedicalFormView(MedicalForm, db.session))
 admin.add_view(PrescriptionView(Prescription, db.session))
 
 
+# admin.add_view(ReceiptDetailsView(ReceiptDetails,  db.session,name="Receipt Details", category="Receipt"))
+# admin.add_view(PaymentView(name='Lập hóa đơn'))
+
+
 admin.add_view(DoctorView(Doctor, db.session))
 admin.add_view(NurseView(Nurse, db.session))
 admin.add_view(CashierView(Cashier, db.session))
@@ -133,4 +160,6 @@ admin.add_view(AdminView(Administrator, db.session))
 
 
 admin.add_view(MyStatsView(name='Thống kê báo cáo'))
+admin.add_view(TanSuatKham(name='Thống kê báo cáo theo tần suất khám'))
+admin.add_view(TanSuatThuoc(name='Thống kê báo cáo sử dụng thuốc'))
 admin.add_view(MyLogoutView(name='Đăng xuất'))

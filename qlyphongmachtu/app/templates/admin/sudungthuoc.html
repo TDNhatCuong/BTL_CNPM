@@ -1,24 +1,26 @@
 {% extends '/admin/base.html' %}
 
 {% block body %}
-<h1 class="text-center text-danger">THỐNG KÊ DOANH THU KHÁM BỆNH THEO THÁNG</h1>
+<h1 class="text-center text-danger">THỐNG KÊ TẦN SUẤT SỬ DỤNG THUỐC</h1>
 
 <div class="row">
     <div class="col-md-5 col-xs-12">
         <table class="table">
             <tr>
-                <th>Tháng lập</th>
-                <th>Doanh thu</th>
+                <th>Tên thuốc</th>
+                <th>Tháng</th>
+                <th>Tần suất</th>
             </tr>
 
-            {% for s in doanhthu %}
+            {% for s in tanSuatThuoc %}
             <tr>
                 <td>{{ s[0] }}</td>
+                <td>{{ s[1] }}</td>
                 <td>
-                    {% if s[1] %}
-                        {{ "{:,.0f}".format(s[1]) }} VND
+                    {% if s[2] %}
+                        {{ "{:,.1f}".format(s[2]) }} %
                     {% else %}
-                        0 VND
+                        0 %
                     {% endif %}
                 </td>
             </tr>
@@ -36,7 +38,7 @@
             <input type="submit" value="Thống kê" class="btn btn-info" />
         </form>
 
-        <canvas id="myMoneyChart"></canvas>
+        <canvas id="tuanSuatChart"></canvas>
     </div>
 </div>
 
@@ -44,27 +46,22 @@
 <script>
     let name = [], info = []
     let borderColors = [], colors = []
+    let r, g, b;
 
-
-    {% for s in doanhthu %}
+    {% for s in tanSuatThuoc %}
         name.push('{{ s[0] }}')
-        info.push({{ s[1] }})
+        info.push({{ s[2] }})
 
+        r = Math.random()*255
+        g = Math.random()*255
+        b = Math.random()*255
 
-        let r = Math.random() * 255;
-        let g = Math.random() * 255;
-        let b = Math.random() * 255;
-
-
-        let newColor = `rgba(${r}, ${g}, ${b}, 0.5)`;
-
-
-        colors.push(newColor);
-        borderColors.push(newColor)
+        colors.push(`rgba(${r}, ${g}, ${b}, 0.5)`)
+        borderColors.push(`rgba(${r}, ${g}, ${b}, 0.5)`)
     {% endfor %}
 
     window.onload = function() {
-        const ctx  = document.getElementById('myMoneyChart').getContext('2d');
+        const ctx  = document.getElementById('tuanSuatChart').getContext('2d');
 
         loadChart(ctx, name, info, 'doughnut', colors, borderColors);
     }
